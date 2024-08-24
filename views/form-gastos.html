@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css.css" />
+    <title>Registrar Gasto</title>
+  </head>
+  <body>
+    <div class="contenedor">
+      <h1 class="textoTitulo">Registrar Gasto</h1>
+      <form method="POST" action="/gastos">
+        <!-- Campo oculto para el token CSRF -->
+        <input type="hidden" name="_csrf" id="csrfTokenField" />
+
+        <div class="campo">
+          <label class="tituloCampo">Descripción:</label>
+          <input
+            class="inputCampo"
+            type="text"
+            name="descripcion"
+            placeholder="Descripción del gasto"
+            required
+          />
+        </div>
+        <div class="campo">
+          <label class="tituloCampo">Monto:</label>
+          <input
+            class="inputCampo"
+            type="number"
+            name="monto"
+            step="0.01"
+            placeholder="Monto del gasto"
+            required
+          />
+        </div>
+        <div class="campo">
+          <label class="tituloCampo">Fecha:</label>
+          <input class="inputCampo" type="date" name="fecha" required />
+        </div>
+        <input type="submit" class="botonCrear" value="Registrar Gasto" />
+      </form>
+    </div>
+
+    <script>
+      // Hacer una solicitud para obtener el token CSRF y añadirlo al campo oculto
+      fetch("/csrf-token", {
+        method: "GET",
+        credentials: "same-origin", // Necesario para enviar cookies con la solicitud
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("csrfTokenField").value = data.csrfToken;
+        })
+        .catch((error) =>
+          console.error("Error al obtener el token CSRF:", error)
+        );
+    </script>
+  </body>
+</html>

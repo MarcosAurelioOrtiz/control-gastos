@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css.css" />
+    <title>Registro</title>
+  </head>
+  <body>
+    <div class="contenedor">
+      <h1 class="textoTitulo">Control de Gastos</h1>
+      <h2 class="textoTitulo">Crear Cuenta</h2>
+
+      <!-- Aquí se mostrarán los errores -->
+      <div id="errores" class="errores"></div>
+
+      <form method="post" action="/registro">
+        <input type="hidden" name="_csrf" id="csrfTokenField" />
+
+        <div class="campo">
+          <label class="tituloCampo">Nombre: </label>
+          <input
+            class="inputCampo"
+            type="text"
+            name="nombre"
+            placeholder="Tu nombre"
+            id="nombre"
+          />
+        </div>
+        <div class="campo">
+          <label class="tituloCampo">Email: </label>
+          <input
+            class="inputCampo"
+            type="email"
+            name="email"
+            placeholder="Tu email"
+            id="email"
+          />
+        </div>
+        <div class="campo">
+          <label class="tituloCampo">Password: </label>
+          <input
+            class="inputCampo"
+            type="password"
+            name="password"
+            placeholder="Tu password"
+          />
+        </div>
+
+        <div class="campo">
+          <label class="tituloCampo">Repetir Password: </label>
+          <input
+            class="inputCampo"
+            type="password"
+            name="confirmar"
+            placeholder="Repetir password"
+          />
+        </div>
+
+        <input type="submit" class="botonCrear" value="Crear Cuenta" />
+      </form>
+
+      <div class="campo">
+        <a href="/iniciar-sesion" class="botonLink"
+          >¿Ya tienes una cuenta? Iniciar Sesión</a
+        >
+      </div>
+    </div>
+
+    <script>
+      // Obtener el token CSRF de una ruta segura y asignarlo al campo oculto en el formulario
+      fetch("/csrf-token", {
+        method: "GET",
+        credentials: "same-origin",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("csrfTokenField").value = data.csrfToken;
+        });
+
+      // Hacer una solicitud GET a la ruta '/errores' para obtener los errores desde la sesión
+      fetch("/errores")
+        .then((response) => response.json())
+        .then((data) => {
+          const errores = data.errores;
+          const datos = data.datos;
+
+          const erroresDiv = document.getElementById("errores");
+          if (errores.length > 0) {
+            let erroresHtml = "<ul class='lista-errores'>";
+            errores.forEach((error) => {
+              erroresHtml += `<li class='error-item'>${error.msg}</li>`;
+            });
+            erroresHtml += "</ul>";
+            erroresDiv.innerHTML = erroresHtml;
+          }
+
+          if (datos.nombre)
+            document.getElementById("nombre").value = datos.nombre;
+          if (datos.email) document.getElementById("email").value = datos.email;
+        });
+    </script>
+  </body>
+</html>

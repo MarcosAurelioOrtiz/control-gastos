@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css.css" />
+    <title>Mis Gastos</title>
+  </head>
+  <body>
+    <div class="contenedor">
+      <h1 class="textoTitulo">Hola, <span id="nombreUsuario"></span></h1>
+      <a class="botonLink" href="/form-gastos">Crear nuevo gasto</a>
+      <a class="botonLink" href="/cerrar-sesion">Cerrar Sesión</a>
+
+      <div id="gastos-container" class="gastos-container"></div>
+    </div>
+
+    <script>
+      // Obtener el nombre del usuario
+      fetch("/api/usuario", {
+        method: "GET",
+        credentials: "same-origin",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("nombreUsuario").textContent =
+            data.nombreUsuario;
+        })
+        .catch((error) =>
+          console.error("Error al obtener el nombre del usuario:", error)
+        );
+
+      // Obtener y mostrar los gastos del usuario
+      fetch("/api/gastos", {
+        method: "GET",
+        credentials: "same-origin",
+      })
+        .then((response) => response.json())
+        .then((gastos) => {
+          const gastosContainer = document.getElementById("gastos-container");
+
+          if (gastos.length > 0) {
+            gastos.forEach((gasto) => {
+              const gastoCard = document.createElement("div");
+              gastoCard.classList.add("gasto-card");
+
+              gastoCard.innerHTML = `
+                <h3>${gasto.descripcion}</h3>
+                <p>Monto: $${gasto.monto}</p>
+                <p>Fecha: ${gasto.fecha}</p>
+              `;
+
+              gastosContainer.appendChild(gastoCard);
+            });
+          } else {
+            gastosContainer.innerHTML =
+              "<p>No has registrado ningún gasto aún.</p>";
+          }
+        })
+        .catch((error) => console.error("Error al obtener los gastos:", error));
+    </script>
+  </body>
+</html>

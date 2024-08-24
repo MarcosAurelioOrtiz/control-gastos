@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css.css" />
+    <title>Inicio Sesion</title>
+  </head>
+  <body>
+    <div class="contenedor">
+      <h1 class="textoTitulo">Control de Gastos</h1>
+      <h2 class="textoTitulo">Iniciar Sesion</h2>
+
+      <!-- Aquí se mostrarán los errores -->
+      <div id="errores" class="errores"></div>
+
+      <form method="post" action="/iniciar-sesion">
+        <input type="hidden" name="_csrf" id="csrfTokenField" />
+
+        <div class="campo">
+          <label class="tituloCampo">Email: </label>
+          <input
+            class="inputCampo"
+            type="email"
+            name="email"
+            placeholder="Tu email"
+            id="email"
+          />
+        </div>
+
+        <div class="campo">
+          <label class="tituloCampo">Password: </label>
+          <input
+            class="inputCampo"
+            type="password"
+            name="password"
+            placeholder="Tu password"
+          />
+        </div>
+        <div class="campo">
+          <a href="#" class="botonLink">¿Olvidaste tu contraseña?</a>
+        </div>
+        <input type="submit" class="botonCrear" value="Iniciar Sesion" />
+      </form>
+      <div class="campo">
+        <a href="/registro" class="botonLink"
+          >¿No tienes una cuenta? Registrate</a
+        >
+      </div>
+    </div>
+    <script>
+      fetch("/csrf-token", {
+        method: "GET",
+        credentials: "same-origin",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("csrfTokenField").value = data.csrfToken;
+        });
+
+      fetch("/errores")
+        .then((response) => response.json())
+        .then((data) => {
+          const errores = data.errores;
+          const datos = data.datos;
+
+          const erroresDiv = document.getElementById("errores");
+          if (errores.length > 0) {
+            let erroresHtml = "<ul class='lista-errores'>";
+            errores.forEach((error) => {
+              erroresHtml += `<li class='error-item'>${error.msg}</li>`;
+            });
+            erroresHtml += "</ul>";
+            erroresDiv.innerHTML = erroresHtml;
+          }
+          if (datos.email) document.getElementById("email").value = datos.email;
+        });
+    </script>
+  </body>
+</html>
